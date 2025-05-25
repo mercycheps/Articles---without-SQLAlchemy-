@@ -2,23 +2,20 @@ DROP TABLE IF EXISTS articles;
 DROP TABLE IF EXISTS authors;
 DROP TABLE IF EXISTS magazines;
 
-
-CREATE TABLE IF NOT EXISTS authors (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL
+CREATE TABLE authors (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS magazines (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    category TEXT NOT NULL
+CREATE TABLE magazines (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    category VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS articles (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    title TEXT NOT NULL,
-    author_id INTEGER NOT NULL,
-    magazine_id INTEGER NOT NULL,
-    FOREIGN KEY (author_id) REFERENCES authors(id),
-    FOREIGN KEY (magazine_id) REFERENCES magazines(id)
+CREATE TABLE articles (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    author_id INTEGER REFERENCES authors(id),
+    magazine_id INTEGER REFERENCES magazines(id)
 );
