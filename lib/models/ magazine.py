@@ -74,4 +74,29 @@ class Magazine:
         conn.close()
         return articles
 
+    def contributors(self):
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            SELECT DISTINCT a.* FROM authors a
+            JOIN articles ar ON a.id = ar.author_id
+            WHERE ar.magazine_id = %s
+            """,
+            (self.id,)
+        )
+        contributors = cursor.fetchall()
+        conn.close()
+        return contributors
+
+    def article_titles(self):
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT title FROM articles WHERE magazine_id = %s",
+            (self.id,)
+        )
+        titles = [row[0] for row in cursor.fetchall()]
+        conn.close()
+        return titles
     
