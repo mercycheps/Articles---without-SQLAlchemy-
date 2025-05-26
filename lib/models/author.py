@@ -10,44 +10,41 @@ class Author:
         cursor = conn.cursor()
         if self.id is None:
             cursor.execute(
-                 "INSERT INTO authors (name) VALUES (%s) RETURNING id",
+                 "INSERT INTO authors (name) VALUES (?)",
+                 (self.name,)
             )
-            self.id = cursor.fetchone()[0]
+            self.id = cursor.lastrowid
         else:
             cursor.execute(
-                "UPDATE authors SET name = %s WHERE id = %s",
+                "UPDATE authors SET name = ? WHERE id = ?",
                 (self.name, self.id)
             )
-            conn.commit()
-            conn.close()
+        conn.commit()
+        conn.close()
+    
+    @property
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, value):
+        if not isinstance(value, str) or not (1 <= len(value) <= 50):
+            raise ValueError("Name must be a string between 1 and 50 characters.")
+        self._name = value
             
     @classmethod
     def find_by_id(cls,author_id):
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute(
-            "SELECT * FROM authors WHERE id = %s",
+            "SELECT * FROM authors WHERE id = ?",
             (author_id,)
         )
         row = cursor.fetchone()
         conn.close()
         if row:
             
-            return cls(id = row[0], name = row[1])
-        return None 
-    
-    @classmethod
-    def find_by_id(cls, author_id):
-        conn = get_connection()
-        cursor = conn.cursor()
-        cursor.execute(
-            "SELECT * FROM authors WHERE id = %s",
-            (author_id,)
-        )
-        row = cursor.fetchone()
-        conn.close()
-        if row:
-            return cls(id = row[0], name = row[1])
+            return cls(id = row['id'], name = row['name'])
         return None
     
     @classmethod
@@ -55,23 +52,55 @@ class Author:
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute(
-            "SELECT * FROM authors WHERE name = %s",
+            "SELECT * FROM authors WHERE name = ?",
             (name,)
         )
         row = cursor.fetchone()
         conn.close()
         
         if row:
-            return cls(id = row[0], name = row[1])
+            return cls(id = row['id'], name = row['name'])
         return None
     
     def articles(self):
+        from lib.models.article import Article
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute(
-            "SELECT * FROM articles WHERE author_id = %s",
+            "SELECT * FROM articles WHERE author_id = ?",
             (self.id,)
         )
         articles = cursor.fetchall()
         conn.close()
-        return articles
+        return [Article(id=article['id'], title=article['title'], author_id=article['author_id'], magazine_id=article['magazine_id']) for article in articles]
+
+    def magazines(self):
+        from lib.models.magazine import Magazine
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT DISTINCT m.* FROM magazines m
+            JOIN articles a ON m.id = a.magazine_id
+            WHERE a.author_id = ?
+        """, (self.id,))
+        magazines_data = cursor.fetchall()
+        conn.close()
+        return [Magazine(id=m['id'], name=m['name'], category=m['category']) for m in magazines_data]
+
+    def add_article(self, magazine, title):
+        from lib.models.article import Article
+        article = Article(title=title, author_id=self.id, magazine_id=magazine.id)
+        article.save()
+        return article
+
+    def topic_areas(self):
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT DISTINCT m.category FROM magazines m
+            JOIN articles a ON m.id = a.magazine_id
+            WHERE a.author_id = ?
+        """, (self.id,))
+        topic_areas = [row['category'] for row in cursor.fetchall()]
+        conn.close()
+        return topic_areas

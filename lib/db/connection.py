@@ -1,13 +1,6 @@
-import psycopg2
-from psycopg2.extras import RealDictCursor
+import sqlite3
 
 def get_connection():
-    conn = psycopg2.connect(
-        dbname="articles_challenge",
-        user="planet",
-        password="postgres",
-        host="localhost",
-        port="5432",
-        cursor_factory=RealDictCursor
-    )
+    conn = sqlite3.connect('articles.db')
+    conn.row_factory = sqlite3.Row # This enables column access by name
     return conn
