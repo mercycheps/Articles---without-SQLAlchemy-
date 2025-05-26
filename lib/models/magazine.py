@@ -5,6 +5,25 @@ class Magazine:
         self.id = id
         self.name = name
         self.category = category
+        
+    @classmethod
+    def top_publisher(cls):
+        conn = get_connection()
+        cursor = conn.cursor()
+        query = """
+            SELECT magazines.*, COUNT(articles.id) AS article_count
+            FROM magazines
+            JOIN articles ON articles.magazine_id = magazines.id
+            GROUP BY magazines.id
+            ORDER BY article_count DESC
+            LIMIT 1;
+        """
+        cursor.execute(query)
+        row = cursor.fetchone()
+        conn.close()
+        if row:
+            return cls(id=row['id'], name=row['name'], category=row['category'])
+        return None    
     
     @property
     def name(self):
@@ -165,3 +184,12 @@ class Magazine:
         magazines_data = cursor.fetchall()
         conn.close()
         return magazines_data
+
+    @classmethod
+    def get_all(cls):
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM magazines")
+        magazines_data = cursor.fetchall()
+        conn.close()
+        return [cls(id=row['id'], name=row['name'], category=row['category']) for row in magazines_data]

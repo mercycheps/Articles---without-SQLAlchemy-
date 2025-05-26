@@ -104,3 +104,12 @@ class Author:
         topic_areas = [row['category'] for row in cursor.fetchall()]
         conn.close()
         return topic_areas
+
+    @classmethod
+    def get_all(cls):
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM authors")
+        authors_data = cursor.fetchall()
+        conn.close()
+        return [cls(id=row['id'], name=row['name']) for row in authors_data]

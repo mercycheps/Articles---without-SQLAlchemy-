@@ -17,3 +17,9 @@ CREATE TABLE IF NOT EXISTS articles (
   FOREIGN KEY (author_id) REFERENCES authors(id),
   FOREIGN KEY (magazine_id) REFERENCES magazines(id)
 );
+
+CREATE INDEX IF NOT EXISTS idx_articles_magazine_id ON articles (magazine_id);
+CREATE INDEX IF NOT EXISTS idx_articles_author_id ON articles (author_id);
+CREATE INDEX IF NOT EXISTS idx_magazines_name ON magazines (name);
+CREATE INDEX IF NOT EXISTS idx_magazines_category ON magazines (category);
+CREATE INDEX IF NOT EXISTS idx_authors_name ON authors (name);

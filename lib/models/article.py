@@ -115,3 +115,12 @@ class Article:
     def magazine(self):
         from lib.models.magazine import Magazine
         return Magazine.find_by_id(self.magazine_id)
+
+    @classmethod
+    def get_all(cls):
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM articles")
+        articles_data = cursor.fetchall()
+        conn.close()
+        return [cls(id=row['id'], title=row['title'], author_id=row['author_id'], magazine_id=row['magazine_id']) for row in articles_data]
