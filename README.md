@@ -1,8 +1,8 @@
-# Object Relations Code Challenge - Articles
+ Object Relations Code Challenge - Articles
 
 This project models the relationships between Authors, Articles, and Magazines, with data persisted in a SQLite database.
 
-## Problem Statement
+Problem Statement
 
 The core relationships are:
 - An `Author` can write many `Articles`.
@@ -10,33 +10,33 @@ The core relationships are:
 - An `Article` belongs to both an `Author` and a `Magazine`.
 - The `Author`-`Magazine` relationship is many-to-many.
 
-## Setup Instructions
+Setup Instructions
 
-1.  **Clone the repository (if not already cloned):**
+1.  Clone the repository (if not already cloned):**
     ```bash
     git clone <repository_url>
     cd Articles---without-SQLAlchemy-
     ```
 
-2.  **Create and activate a virtual environment:**
+2.  Create and activate a virtual environment:**
     ```bash
     python3 -m venv env
     source env/bin/activate
     ```
 
-3.  **Install dependencies:**
+3.  nstall dependencies:
     ```bash
     pip install pytest
     ```
 
-4.  **Database Setup:**
+4.  Database Setup:
     The project uses SQLite. The database schema is defined in `lib/db/schema.sql`, and initial data is seeded via `lib/db/seed.py`.
     To set up the database and populate it with sample data, run:
     ```bash
     PYTHONPATH=. python3 scripts/setup_db.py
     ```
 
-## Project Structure
+ Project Structure
 
 ```
 code-challenge/
@@ -65,7 +65,7 @@ code-challenge/
 └── README.md # Project documentation
 ```
 
-## Running Tests
+ Running Tests
 
 To run the unit tests and verify the implementation, use `pytest`:
 
