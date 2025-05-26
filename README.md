@@ -79,3 +79,16 @@ To see the implemented SQL query methods and relationships in action, run the `r
 
 ```bash
 PYTHONPATH=. python3 scripts/run_queries.py
+```
+
+## Running the CLI Tool
+
+An interactive command-line interface (CLI) tool has been implemented to allow users to query the database.
+
+```bash
+PYTHONPATH=. python3 scripts/cli.py
+```
+
+## Database Indexes
+
+Database indexes have been added to `lib/db/schema.sql` to improve query performance on frequently accessed columns such as `articles.magazine_id`, `articles.author_id`, `magazines.name`, `magazines.category`, and `authors.name`.

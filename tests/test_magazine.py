@@ -142,3 +142,26 @@ def test_magazine_contributing_authors():
     assert len(contributing_authors) == 2
     assert contributing_authors[0].name == "Author A"
     assert contributing_authors[1].name == "Author B"
+
+def test_magazine_top_publisher():
+    magazine1 = Magazine(name="Magazine A", category="Tech")
+    magazine1.save()
+    magazine2 = Magazine(name="Magazine B", category="Science")
+    magazine2.save()
+    magazine3 = Magazine(name="Magazine C", category="Art")
+    magazine3.save()
+
+    author = Author(name="Test Author")
+    author.save()
+
+    Article(title="A1", author_id=author.id, magazine_id=magazine1.id).save()
+    Article(title="A2", author_id=author.id, magazine_id=magazine1.id).save()
+    Article(title="A3", author_id=author.id, magazine_id=magazine1.id).save()
+    Article(title="B1", author_id=author.id, magazine_id=magazine2.id).save()
+    Article(title="B2", author_id=author.id, magazine_id=magazine2.id).save()
+    Article(title="C1", author_id=author.id, magazine_id=magazine3.id).save()
+
+    top_publisher = Magazine.top_publisher()
+    assert top_publisher is not None
+    assert top_publisher.name == "Magazine A"
+    assert top_publisher.category == "Tech"
